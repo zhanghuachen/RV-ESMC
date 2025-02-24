@@ -81,23 +81,6 @@ void conv_cal_normal(u8 *input, u8 *kernel, u8 *output, int input_size, int kern
         }
     }
 }
-
-
-// // 224x224 Input for convolution (224 * 224 = 256 elements)
-// static u8 input224x224[224 * 224] = {
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4,
-//     1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4, 1, 2, 3, 4
-// };
 static u8 input[4*4]=
 {
     1,1,1,1,
@@ -122,30 +105,28 @@ int main() {
     u8 res1[2 * 2]; // Result array for storing 224x224 result
     u8 res2[2 * 2];
     
-    // start_time = rdcycle(); // Start cycle count
+    start_time = rdcycle(); // Start cycle count
     
-    // Loop through blocks of 4x4
-    // for (int i = 0; i < 56; i++) {
-    //     for (int j = 0; j < 56; j++) {
-    //         // Address of the 4x4 block in input
-    //         u8 *block_addr = &input224x224[(i * 4) * 224 + (j * 4)];
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            // Address of the 4x4 block in input
+            u8 *block_addr = &input[(i * 4) * 4 + (j * 4)];
             
-    //         // Apply convolution on the 4x4 block
-    //         //start_time = rdcycle(); 
+            // Apply convolution on the 4x4 block
+            //start_time = rdcycle(); 
             
-    //         conv_kernel(kernel3x3, 9); // Apply kernel (3x3)
-    //         conv_cal(block_addr, 224); // Apply convolution on block (224 elements)
-    //         conv_wb(&res1[(i * 4) * 224 + (j * 4)]); // Store result back
+            conv_kernel(kernel3x3, 9); // Apply kernel (3x3)
+            conv_cal(block_addr, 4); // Apply convolution on block (224 elements)
+            conv_wb(&res1[(i * 4) * 2 + (j * 4)]); // Store result back
             
-    //         //end_time = rdcycle(); // End cycle count
-    //         //total += end_time - start_time;
-    //     }
-    // }
+            //end_time = rdcycle(); // End cycle count
+            //total += end_time - start_time;
+        }
+    }
 
-    // end_time = rdcycle(); // End cycle count
-    // printf("Total cycles taken: %lu\n", end_time - start_time);
+    end_time = rdcycle(); // End cycle count
+    printf("Total cycles taken: %lu\n", end_time - start_time);
 
-    // finish(); // Finish processing
 
     start_time = rdcycle();
     conv_cal_normal(input, kernel3x3, res2, 16, 3);
